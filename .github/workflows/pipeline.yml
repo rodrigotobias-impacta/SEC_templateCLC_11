@@ -76,7 +76,14 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 17
-                
+        
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v1
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+        
     - name: Cache Maven packages
       uses: actions/cache@v1
       with:
@@ -84,18 +91,6 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
         
-
-  sonar:
-    runs-on: ubuntu-latest
-    needs: unit-test
-    steps:
-    - name: Cache SonarCloud packages
-      uses: actions/cache@v1
-      with:
-        path: ~/.sonar/cache
-        key: ${{ runner.os }}-sonar
-        restore-keys: ${{ runner.os }}-sonar
-
     - name: Build and analyze
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
@@ -197,4 +192,4 @@ jobs:
       - name: Deploy 
         shell: bash
         run: |
-          echo "Deploy PROD" 
+          echo "Deploy PROD"
